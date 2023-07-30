@@ -4,11 +4,18 @@ oneutil is a Python package that provides useful utilities for work we do at One
 
 ## Installation
 
-To install oneutil, you can:
+To install oneutil, you can get it from PYPI:
+
+```bash
+pip install oneutil
+
+```
+
+For testing, you can install it locally via
 
 ```bash
 python setup.py sdist bdist_wheel
-pip install ./dist/oneutil-0.0.1.tar.gz
+pip install -e . 
 ```
 
 ## Usage
