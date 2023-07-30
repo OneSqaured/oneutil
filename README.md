@@ -1,5 +1,7 @@
 # One Squared Utilities
 
+[![PyPI version](https://badge.fury.io/py/oneutil.svg)](https://badge.fury.io/py/oneutil)
+
 oneutil is a Python package that provides useful utilities for work we do at One Squared.
 
 ## Installation
