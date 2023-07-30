@@ -6,4 +6,7 @@ setup(
     description='OneSquared Utilities',
     author='Shawn Lin',
     packages=find_packages(),
+    install_requires=[
+        'boto3>=1.18.0',
+    ],
 )
