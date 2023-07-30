@@ -32,7 +32,7 @@ buckets = get_s3_buckets()
 
 oneutil relies on the AWS SDK (boto3) for interacting with AWS S3. To use the package, make sure you have valid AWS access credentials (access key ID and secret access key) set as environment variables or provide them explicitly when calling the functions.
 
-- s3_public_key: The AWS access key ID.
-- s3_private_key: The AWS secret access key.
+- `s3_public_key`: The AWS access key ID.
+- `s3_private_key`: The AWS secret access key.
 
 If the environment variables are not set, you can pass the credentials directly as arguments to the functions.
