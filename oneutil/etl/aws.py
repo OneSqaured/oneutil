@@ -1,6 +1,7 @@
 import boto3
 import os
 
+from oneutil.logging import logger
 
 def get_s3_bucket_files(
     bucket: str = "databento",
@@ -21,6 +22,9 @@ def get_s3_bucket_files(
         list: A list of file keys present in the specified S3 bucket.
     """
 
+    # Log the function call with provided arguments
+    logger.debug(f"get_s3_bucket_files called with bucket={bucket}, region={region}")
+
     # Create an S3 resource object using the provided credentials and region.
     s3 = boto3.resource(
         service_name="s3",
@@ -34,6 +38,9 @@ def get_s3_bucket_files(
 
     # List all objects (files) in the bucket and store their keys in a list.
     files = [file.key for file in bucket_obj.objects.all()]
+
+    # Log the number of files retrieved
+    logger.debug(f"Number of files retrieved: {len(files)}")
 
     # Return the list of file keys.
     return files
@@ -56,6 +63,9 @@ def get_s3_buckets(
         list: A list of AWS S3 bucket names available in the specified region.
     """
 
+    # Log the function call with provided arguments
+    logger.debug(f"get_s3_buckets called with region={region}")
+
     # Create an S3 resource object using the provided credentials and region.
     s3 = boto3.resource(
         service_name="s3",
@@ -66,6 +76,9 @@ def get_s3_buckets(
 
     # List all buckets in the specified region and store their names in a list.
     buckets = [bucket.name for bucket in s3.buckets.all()]
+
+    # Log the number of buckets retrieved
+    logger.debug(f"Number of buckets retrieved: {len(buckets)}")
 
     # Return the list of bucket names.
     return buckets
