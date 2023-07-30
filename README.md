@@ -14,10 +14,10 @@ pip install ./dist/oneutil-0.0.1.tar.gz
 ### Usage
 
 ```python
-from oneutil.etl.aws import get_bucket_files, get_s3_buckets
+from oneutil.etl.aws import get_s3_bucket_files, get_s3_buckets
 
 # List files in the default S3 bucket in 'us-east-1' region
-files = get_bucket_files()
+files = get_s3_bucket_files()
 
 # List all available S3 buckets in 'us-east-1' region
 buckets = get_s3_buckets()
