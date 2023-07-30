@@ -11,12 +11,10 @@ python setup.py sdist bdist_wheel
 pip install ./dist/oneutil-0.0.1.tar.gz
 ```
 
-Usage
+### Usage
 
-List Files in an S3 Bucket
-
-```
-from oneutil.aws import get_bucket_files, get_s3_buckets
+```python
+from oneutil.etl.aws import get_bucket_files, get_s3_buckets
 
 # List files in the default S3 bucket in 'us-east-1' region
 files = get_bucket_files()
