@@ -4,7 +4,7 @@ import os
 from oneutil.logging import logger
 
 def get_s3_bucket_files(
-    bucket: str = "databento",
+    bucket: str = "onesquared-databento",
     region: str = "us-east-1",
     public_key: str = os.environ.get("s3_public_key"),
     private_key: str = os.environ.get("s3_private_key"),
@@ -13,7 +13,7 @@ def get_s3_bucket_files(
     Get a list of file keys from a specified AWS S3 bucket.
 
     Parameters:
-        bucket (str): The name of the S3 bucket. Default is 'databento'.
+        bucket (str): The name of the S3 bucket. Default is 'onesquared-databento'.
         region (str): The AWS region where the bucket is located. Default is 'us-east-1'.
         public_key (str): AWS access key ID. It can be provided as an argument or read from environment variables.
         private_key (str): AWS secret access key. It can be provided as an argument or read from environment variables.
