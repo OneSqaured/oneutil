@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="oneutil",
-    version="0.0.3",
+    version="0.0.4",
     description="OneSquared Utilities",
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",

@@ -47,7 +47,7 @@ def get_df_from_s3(
     body = read_s3_bucket_file(filename, bucket, region, public_key, private_key)
 
     # Create a Databento store from the bytes read from the S3 bucket
-    dbn = databento.DNBStore.from_bytes(body)
+    dbn = databento.DBNStore.from_bytes(body)
 
     # Convert the Databento store to a DataFrame
     df = dbn.to_df()
