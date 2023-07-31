@@ -1,5 +1,6 @@
 import os
 import databento
+from oneutil.logging import logger
 from oneutil.etl.aws import read_s3_bucket_file
 
 
@@ -38,7 +39,9 @@ def get_df_from_s3(
         df = get_df_from_s3(filename="data.csv", bucket="my-data-bucket", region="us-west-2")
     """
 
-    logger.debug(f"get_df_from_s3 called with filename={filename}, bucket={bucket}, region={region}")
+    logger.debug(
+        f"get_df_from_s3 called with filename={filename}, bucket={bucket}, region={region}"
+    )
 
     # Read the file content from the S3 bucket using the provided filename
     body = read_s3_bucket_file(filename, bucket, region, public_key, private_key)
