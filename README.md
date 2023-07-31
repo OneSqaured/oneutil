@@ -33,7 +33,7 @@ files = get_s3_bucket_files()
 buckets = get_s3_buckets()
 
 # Read a databento file
-df=get_df_from_s3(get_s3_bucket_files()[-1])
+df = get_df_from_s3(get_s3_bucket_files()[-1])
 ```
 
 oneutil relies on the AWS SDK (boto3) for interacting with AWS S3. To use the package, make sure you have valid AWS access credentials (access key ID and secret access key) set as environment variables or provide them explicitly when calling the functions.
