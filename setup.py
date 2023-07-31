@@ -11,5 +11,6 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "boto3>=1.18.0",
+        "databento>=0.16.0",
     ],
 )
