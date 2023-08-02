@@ -68,6 +68,33 @@ def get_files_in_s3_folder(
         region: str = "us-east-1",
         public_key: str = os.environ.get("s3_public_key"),
         private_key: str = os.environ.get("s3_private_key")):
+    """
+       Retrieves a list of file names present in a specific folder in an Amazon S3 bucket.
+
+       This function connects to the specified Amazon S3 bucket using the provided credentials
+       (public_key and private_key) and retrieves a list of file names in the specified folder.
+       The function uses the AWS SDK for Python (Boto3) to interact with the S3 service.
+
+       Parameters:
+           foldername (str): The name of the folder for which to retrieve file names.
+           bucket (str, optional): The name of the S3 bucket. Default is "onesquared-databento".
+           region (str, optional): The AWS region where the S3 bucket is located. Default is "us-east-1".
+           public_key (str, optional): The public access key for the AWS account. If not provided,
+                                      it will be retrieved from the environment variable "s3_public_key".
+           private_key (str, optional): The private access key for the AWS account. If not provided,
+                                        it will be retrieved from the environment variable "s3_private_key".
+
+       Returns:
+           List[str]: A list of file names (including the folder path) present in the specified folder.
+                      The list will be empty if no files are found in the folder.
+
+       Example:
+           >>> get_files_in_s3_folder("my_data_folder")
+           ['my_data_folder/data_file1.csv', 'my_data_folder/data_file2.csv']
+
+           >>> get_files_in_s3_folder("empty_folder")
+           []
+       """
     file_list = get_s3_bucket_files(bucket, region, public_key, private_key)
     # Filter the file list to include only files in the specified folder
     files_in_folder = [
@@ -77,6 +104,28 @@ def get_files_in_s3_folder(
 
 
 def extract_date_from_filename(filename):
+    """
+    Extracts the date from a filename using a regular expression pattern.
+
+    The function takes a filename as input and searches for a pattern in the format of 'YYYYMMDD',
+    representing a date. If the pattern is found in the filename, the function extracts the date
+    and converts it into a datetime.date object.
+
+    Parameters:
+        filename (str): The filename from which the date needs to be extracted.
+
+    Returns:
+        datetime.date or None: If the date pattern is found and successfully extracted from the filename,
+        the function returns a datetime.date object representing the date. If no date pattern is found
+        in the filename, the function returns None.
+
+    Example:
+        >>> extract_date_from_filename("data_report_20230801.csv")
+        datetime.date(2023, 8, 1)
+
+        >>> extract_date_from_filename("report.txt")
+        None
+    """
     # Regular expression pattern to find the date part in the filename
     date_pattern = r'\d{8}'
 
@@ -90,6 +139,7 @@ def extract_date_from_filename(filename):
         return date_object
     else:
         return None
+
 
 def read_databento_from_s3(folder: str, sd: date, ed: date, bucket: str = "onesquared-databento",
                            region: str = "us-east-1",
@@ -115,8 +165,7 @@ def read_databento_from_s3(folder: str, sd: date, ed: date, bucket: str = "onesq
     logger.debug(f"read_databento_from_s3 called with folder={folder}, sd={sd}, ed={ed}")
 
     # Get a list of all the files in the S3 folder
-    files_in_folder = get_files_in_s3_folder(foldername=folder, region=region, public_key=public_key,
-                                             private_key=private_key)
+    files_in_folder = get_files_in_s3_folder(folder, bucket, region, public_key, private_key)
 
     # Filter files based on date range (sd and ed)
     # for file in files_in_folder:
@@ -132,11 +181,9 @@ def read_databento_from_s3(folder: str, sd: date, ed: date, bucket: str = "onesq
     # Read data from the selected files and combine them into a DataFrame
     dfs_to_concat = []
     for filename in files_to_read:
-        df = get_df_from_s3(filename=filename, bucket=bucket, region=region, public_key=public_key,
-                            private_key=private_key)
+        df = get_df_from_s3(filename, bucket, region, public_key, private_key)
         dfs_to_concat.append(df)
 
     combined_df = pd.concat(dfs_to_concat, ignore_index=True)
 
     return combined_df
-
