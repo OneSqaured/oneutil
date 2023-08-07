@@ -159,3 +159,59 @@ def read_s3_bucket_file(
 
     # Return the list of file keys.
     return body
+
+
+def get_files_in_s3_path(
+    path: str,
+    bucket: str = "onesquared-databento",
+    region: str = "us-east-1",
+    public_key: str = os.environ.get("s3_public_key"),
+    private_key: str = os.environ.get("s3_private_key"),
+):
+    """
+    Retrieves a list of file names present in a specific folder in an Amazon S3 bucket.
+
+    This function connects to the specified Amazon S3 bucket using the provided credentials
+    (public_key and private_key) and retrieves a list of file names in the specified folder.
+    The function uses the AWS SDK for Python (Boto3) to interact with the S3 service.
+
+    Parameters:
+        path (str): The name of the folder for which to retrieve file names.
+        bucket (str, optional): The name of the S3 bucket. Default is "onesquared-databento".
+        region (str, optional): The AWS region where the S3 bucket is located. Default is "us-east-1".
+        public_key (str, optional): The public access key for the AWS account. If not provided,
+                                   it will be retrieved from the environment variable "s3_public_key".
+        private_key (str, optional): The private access key for the AWS account. If not provided,
+                                     it will be retrieved from the environment variable "s3_private_key".
+
+    Returns:
+        List[str]: A list of file names (including the folder path) present in the specified folder.
+                   The list will be empty if no files are found in the folder.
+
+    Example:
+        >>> get_files_in_s3_path("my_data_folder")
+        ['my_data_folder/data_file1.csv', 'my_data_folder/data_file2.csv']
+
+        >>> get_files_in_s3_path("empty_folder")
+        []
+    """
+
+    # file_list = get_s3_bucket_files(bucket, region, public_key, private_key)
+    # # Filter the file list to include only files in the specified folder
+    # files_in_folder = [
+    #     filename for filename in file_list if filename.startswith(path)
+    # ]
+
+    # Create an S3 resource object using the provided credentials and region.
+    s3 = get_s3_object(region, public_key, private_key)
+
+    # Get the S3 bucket object.
+    bucket_obj = s3.Bucket(bucket)
+    files_in_folder = [
+        object_summary.key
+        for object_summary in bucket_obj.objects.filter(Prefix=path, Delimiter="/")
+        if not object_summary.key.endswith("/")
+    ]
+    num_files = len(files_in_folder)
+    logger.debug(f"{num_files} files retrieved")
+    return files_in_folder
