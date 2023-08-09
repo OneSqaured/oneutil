@@ -1,7 +1,14 @@
 import os
+from datetime import date
 import databento
+import pandas as pd
+
+from oneutil.etl.util import extract_date_from_string
 from oneutil.logging import logger
-from oneutil.etl.aws import read_s3_bucket_file
+from oneutil.etl.aws import (
+    read_s3_bucket_file,
+    get_files_in_s3_path,
+)
 
 
 def get_df_from_s3(
@@ -54,3 +61,58 @@ def get_df_from_s3(
 
     # Return the DataFrame
     return df
+
+
+def read_databento_from_s3(
+    path: str,
+    sd: date,
+    ed: date,
+    bucket: str = "onesquared-databento",
+    region: str = "us-east-1",
+    public_key: str = os.environ.get("s3_public_key"),
+    private_key: str = os.environ.get("s3_private_key"),
+):
+    """
+    Reads a sequence of files from an S3 folder between given start date (sd) and end date (ed).
+    Combines the files into a DataFrame and returns it.
+
+    Parameters:
+        folder (str): The name of the S3 folder.
+        sd (datetime.date): The start date.
+        ed (datetime.date): The end date.
+
+    Returns:
+        pandas.DataFrame: The DataFrame containing the combined data from the specified files.
+
+    Raises:
+        FileNotFoundError: If any of the specified files are not found in the S3 bucket.
+        Exception: If there are any errors during the conversion to DataFrame.
+    """
+
+    logger.debug(f"read_databento_from_s3 called with path={path}, sd={sd}, ed={ed}")
+
+    # Get a list of all the files in the S3 folder
+    files_in_folder = get_files_in_s3_path(
+        path, bucket, region, public_key, private_key
+    )
+
+    # Filter files based on date range (sd and ed)
+    # for file in files_in_folder:
+    #     print(extract_date_from_filename(file))
+    files_to_read = []
+    for filename in files_in_folder:
+        file_date = extract_date_from_string(filename)
+        if file_date is not None and (sd <= file_date <= ed):
+            files_to_read.append(filename)
+    if not files_to_read:
+        raise FileNotFoundError(f"No files found in the date range {sd} to {ed}")
+
+    # Read data from the selected files and combine them into a DataFrame
+    dfs_to_concat = []
+    for filename in files_to_read:
+        df = get_df_from_s3(filename, bucket, region, public_key, private_key)
+        dfs_to_concat.append(df)
+
+    combined_df = pd.concat(dfs_to_concat, ignore_index=True)
+
+    return combined_df
